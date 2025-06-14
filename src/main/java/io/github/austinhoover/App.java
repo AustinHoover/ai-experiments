@@ -1,16 +1,12 @@
 package io.github.austinhoover;
 
 import java.util.Scanner;
-import java.util.Optional;
 
 import io.github.austinhoover.kobold.Kobold;
-import io.github.austinhoover.rpg.character.Character;
 import io.github.austinhoover.rpg.intent.IntentParser;
 import io.github.austinhoover.rpg.intent.MovementHandler;
 import io.github.austinhoover.rpg.intent.ConversationHandler;
 import io.github.austinhoover.rpg.intent.StoryHandler;
-import io.github.austinhoover.rpg.location.Location;
-import io.github.austinhoover.rpg.location.Region;
 import io.github.austinhoover.rpg.player.PlayerState;
 import io.github.austinhoover.rpg.world.World;
 import io.github.austinhoover.rpg.intent.GameLog;

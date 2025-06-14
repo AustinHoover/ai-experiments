@@ -4,8 +4,6 @@ import java.util.List;
 
 import io.github.austinhoover.kobold.Kobold;
 import io.github.austinhoover.rpg.location.Location;
-import io.github.austinhoover.rpg.location.LocationMap;
-import io.github.austinhoover.rpg.location.RegionMap;
 import io.github.austinhoover.rpg.player.PlayerState;
 import io.github.austinhoover.rpg.world.World;
 
