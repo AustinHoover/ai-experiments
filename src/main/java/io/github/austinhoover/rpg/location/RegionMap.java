@@ -51,7 +51,12 @@ public class RegionMap {
     public void removeRegion(Region region) {
         regions.remove(region.getId());
         // Remove from parent if it exists
-        region.getParentRegion().ifPresent(parent -> parent.removeSubregion(region));
+        region.getParentRegionId().ifPresent(parentId -> {
+            Region parent = regions.get(parentId);
+            if (parent != null) {
+                parent.removeSubregion(region);
+            }
+        });
     }
 
     /**
@@ -71,7 +76,7 @@ public class RegionMap {
      */
     public Set<Region> getRootRegions() {
         return regions.values().stream()
-            .filter(region -> region.getParentRegion().isEmpty())
+            .filter(region -> region.getParentRegionId().isEmpty())
             .collect(java.util.stream.Collectors.toSet());
     }
 } 

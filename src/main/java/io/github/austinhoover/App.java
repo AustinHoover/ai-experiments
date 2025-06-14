@@ -5,16 +5,14 @@ import java.util.Optional;
 
 import io.github.austinhoover.kobold.Kobold;
 import io.github.austinhoover.rpg.character.Character;
-import io.github.austinhoover.rpg.character.CharacterMap;
 import io.github.austinhoover.rpg.intent.IntentParser;
 import io.github.austinhoover.rpg.intent.MovementHandler;
 import io.github.austinhoover.rpg.intent.ConversationHandler;
 import io.github.austinhoover.rpg.intent.StoryHandler;
 import io.github.austinhoover.rpg.location.Location;
-import io.github.austinhoover.rpg.location.LocationMap;
 import io.github.austinhoover.rpg.location.Region;
-import io.github.austinhoover.rpg.location.RegionMap;
 import io.github.austinhoover.rpg.player.PlayerState;
+import io.github.austinhoover.rpg.world.World;
 import io.github.austinhoover.rpg.intent.GameLog;
 
 /**
@@ -27,38 +25,20 @@ public final class App {
      */
     public static void main(String[] args){
         Kobold kobold = new Kobold();
-        LocationMap graph = new LocationMap();
-        CharacterMap characters = new CharacterMap();
+        World world = World.loadWorld("data/testworld1.json");
         PlayerState player = new PlayerState();
         IntentParser parser = new IntentParser(kobold);
-        RegionMap regionMap = new RegionMap();
-        ConversationHandler conversation = new ConversationHandler(graph, characters, player, kobold);
-        MovementHandler mover = new MovementHandler(graph, regionMap, player, kobold, conversation);
+        ConversationHandler conversation = new ConversationHandler(world, player, kobold);
+        MovementHandler mover = new MovementHandler(world, player, kobold, conversation);
         GameLog gameLog = new GameLog();
-        StoryHandler story = new StoryHandler(graph, characters, player, kobold, conversation, gameLog);
+        StoryHandler story = new StoryHandler(world, player, kobold, conversation, gameLog);
 
-        //create world
-        Region city = regionMap.createRegion("city", Optional.of("Ravencrest"));
-        
-        Location tavern = Location.create(graph, "tavern", "A warm tavern filled with rowdy patrons.", city.getId());
-        Location cellar = Location.create(graph, "cellar", "A damp cellar beneath the tavern.", city.getId());
-        Location alley = Location.create(graph, "alley", "A shadowy alley between tall buildings.", city.getId());
-        
-        // Add locations to the city region
-        city.addLocation(tavern);
-        city.addLocation(cellar);
-        city.addLocation(alley);
-        
-        // Connect locations
-        tavern.addNeighbor(alley);
-        tavern.addNeighbor(cellar);
-        player.currentLocationId = alley.getId();
-
-        // Create initial character
-        Character bartender = Character.create(characters, "Tom", "bartender", tavern.getId());
-
+        // Get user input for world generation
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Type 'exit' to quit.");
+
+        player.currentLocationId = world.getLocationMap().getLocationById(0).getId();
+
+        System.out.println("\nType 'exit' to quit.");
         mover.describeCurrentLocation();
 
         while (true) {
@@ -71,7 +51,7 @@ public final class App {
             switch (intent.type) {
                 case MOVE -> {
                     if (mover.attemptMove(intent.target)) {
-                        response = "You travel to " + graph.getLocationById(player.currentLocationId).getType() + ".";
+                        response = "You travel to " + world.getLocationMap().getLocationById(player.currentLocationId).getType() + ".";
                         mover.describeCurrentLocation();
                     } else {
                         response = "You can't go there.";

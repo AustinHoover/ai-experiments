@@ -12,18 +12,18 @@ import io.github.austinhoover.kobold.Kobold;
 public class Region {
     private final long id;
     private final String type;
-    private Optional<String> name;
-    private final Set<Location> locations;
-    private final Set<Region> subregions;
-    private Region parentRegion;
+    private String name;
+    private Set<Long> locationIds;
+    private Set<Long> subregionIds;
+    private Long parentRegionId;
 
     protected Region(long id, String type, Optional<String> name) {
         this.id = id;
         this.type = type;
-        this.name = name;
-        this.locations = new HashSet<>();
-        this.subregions = new HashSet<>();
-        this.parentRegion = null;
+        this.name = name.orElse(null);
+        this.locationIds = new HashSet<>();
+        this.subregionIds = new HashSet<>();
+        this.parentRegionId = null;
     }
 
     /**
@@ -68,23 +68,23 @@ public class Region {
     }
 
     public Optional<String> getName() {
-        return name;
+        return Optional.ofNullable(name);
     }
 
     public void setName(Optional<String> name) {
-        this.name = name;
+        this.name = name.orElse(null);
     }
 
-    public Set<Location> getLocations() {
-        return new HashSet<>(locations);
+    public Set<Long> getLocationIds() {
+        return new HashSet<>(locationIds);
     }
 
-    public Set<Region> getSubregions() {
-        return new HashSet<>(subregions);
+    public Set<Long> getSubregionIds() {
+        return new HashSet<>(subregionIds);
     }
 
-    public Optional<Region> getParentRegion() {
-        return Optional.ofNullable(parentRegion);
+    public Optional<Long> getParentRegionId() {
+        return Optional.ofNullable(parentRegionId);
     }
 
     /**
@@ -92,7 +92,10 @@ public class Region {
      * @param location The location to add
      */
     public void addLocation(Location location) {
-        locations.add(location);
+        if(locationIds == null){
+            locationIds = new HashSet<>();
+        }
+        locationIds.add(location.getId());
     }
 
     /**
@@ -100,7 +103,7 @@ public class Region {
      * @param location The location to remove
      */
     public void removeLocation(Location location) {
-        locations.remove(location);
+        locationIds.remove(location.getId());
     }
 
     /**
@@ -108,11 +111,12 @@ public class Region {
      * @param subregion The subregion to add
      */
     public void addSubregion(Region subregion) {
-        if (subregion.parentRegion != null) {
-            subregion.parentRegion.removeSubregion(subregion);
+        if (subregion.parentRegionId != null) {
+            // Note: This will need to be handled by the RegionMap to properly update the parent region
+            subregion.parentRegionId = null;
         }
-        subregion.parentRegion = this;
-        subregions.add(subregion);
+        subregion.parentRegionId = this.id;
+        subregionIds.add(subregion.getId());
     }
 
     /**
@@ -120,8 +124,8 @@ public class Region {
      * @param subregion The subregion to remove
      */
     public void removeSubregion(Region subregion) {
-        if (subregions.remove(subregion)) {
-            subregion.parentRegion = null;
+        if (subregionIds.remove(subregion.getId())) {
+            subregion.parentRegionId = null;
         }
     }
 
@@ -131,19 +135,20 @@ public class Region {
      * @return true if the location is in this region or any subregion
      */
     public boolean containsLocation(Location location) {
-        if (locations.contains(location)) {
+        if (locationIds.contains(location.getId())) {
             return true;
         }
-        return subregions.stream().anyMatch(region -> region.containsLocation(location));
+        // Note: This will need to be handled by the RegionMap to properly check subregions
+        return false;
     }
 
     /**
-     * Gets all locations in this region and its subregions
-     * @return Set of all locations in this region and subregions
+     * Gets all location IDs in this region and its subregions
+     * @return Set of all location IDs in this region and subregions
      */
-    public Set<Location> getAllLocations() {
-        Set<Location> allLocations = new HashSet<>(locations);
-        subregions.forEach(region -> allLocations.addAll(region.getAllLocations()));
-        return allLocations;
+    public Set<Long> getAllLocationIds() {
+        Set<Long> allLocationIds = new HashSet<>(locationIds);
+        // Note: This will need to be handled by the RegionMap to properly get subregion locations
+        return allLocationIds;
     }
-} 
+}

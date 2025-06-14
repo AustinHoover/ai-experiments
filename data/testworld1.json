@@ -1,0 +1,50 @@
+{
+    "regionMap": {
+        "regions": {
+            "0": {
+                "id": 0,
+                "type": "city",
+                "name": "Ravencrest",
+                "locations": [0, 1, 2]
+            }
+        }
+    },
+    "locationMap": {
+        "idLocMap" : {
+            "0": {
+                "id": 0,
+                "type": "tavern",
+                "name": "The Golden Dragon",
+                "description": "A warm tavern filled with rowdy patrons.",
+                "regionId": 0,
+                "neighbors": [1, 2]
+            },
+            "1": {
+                "id": 1,
+                "type": "cellar",
+                "name": "The Dark Cave",
+                "description": "A damp cellar beneath the tavern.",
+                "regionId": 0,
+                "neighbors": [0]
+            },
+            "2": {
+                "id": 2,
+                "type": "alley",
+                "name": "The Shadowy Path",
+                "description": "A shadowy alley between tall buildings.",
+                "regionId": 0,
+                "neighbors": [0]
+            }
+        }
+    },
+    "characterMap": {
+        "idCharMap" : {
+            "0": {
+                "id": 0,
+                "name": "Tom",
+                "role": "bartender",
+                "locationId": 0
+            }
+        }
+    }
+}

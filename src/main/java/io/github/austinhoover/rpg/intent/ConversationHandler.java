@@ -6,14 +6,12 @@ import java.util.List;
 
 import io.github.austinhoover.kobold.Kobold;
 import io.github.austinhoover.rpg.character.Character;
-import io.github.austinhoover.rpg.character.CharacterMap;
 import io.github.austinhoover.rpg.location.Location;
-import io.github.austinhoover.rpg.location.LocationMap;
 import io.github.austinhoover.rpg.player.PlayerState;
+import io.github.austinhoover.rpg.world.World;
 
 public class ConversationHandler {
-    private LocationMap graph;
-    private CharacterMap characters;
+    private World world;
     private PlayerState player;
     private Kobold kobold;
     private Conversation currentConversation;
@@ -23,16 +21,14 @@ public class ConversationHandler {
         Pattern.CASE_INSENSITIVE
     );
 
-    public ConversationHandler(LocationMap graph, CharacterMap characters, PlayerState player, Kobold kobold) {
-        this.graph = graph;
-        this.characters = characters;
-        this.player = player;
+    public ConversationHandler(World world, PlayerState player, Kobold kobold) {
+        this.world = world;
         this.kobold = kobold;
         this.currentConversation = new Conversation();
     }
 
     public void handleTalk(String targetName, String message) {
-        Location currentLocation = graph.getLocationById(player.currentLocationId);
+        Location currentLocation = world.getLocationMap().getLocationById(player.currentLocationId);
         if (currentLocation == null) {
             System.out.println("Error: Invalid current location.");
             return;
@@ -41,7 +37,7 @@ public class ConversationHandler {
         // Find the target character by name or role
         String targetLower = targetName.toLowerCase();
         Character targetCharacter = null;
-        for (Character character : characters.getAllCharacters()) {
+        for (Character character : world.getCharacterMap().getAllCharacters()) {
             if (character.getCurrentLocationId() == currentLocation.getId() &&
                 (character.getName().toLowerCase().equals(targetLower) ||
                  character.getRole().toLowerCase().equals(targetLower))) {
@@ -111,7 +107,7 @@ public class ConversationHandler {
     }
 
     public String handleTalkWithReturn(String targetName, String message) {
-        Location currentLocation = graph.getLocationById(player.currentLocationId);
+        Location currentLocation = world.getLocationMap().getLocationById(player.currentLocationId);
         if (currentLocation == null) {
             String error = "Error: Invalid current location.";
             System.out.println(error);
@@ -119,7 +115,7 @@ public class ConversationHandler {
         }
         String targetLower = targetName.toLowerCase();
         Character targetCharacter = null;
-        for (Character character : characters.getAllCharacters()) {
+        for (Character character : world.getCharacterMap().getAllCharacters()) {
             if (character.getCurrentLocationId() == currentLocation.getId() &&
                 (character.getName().toLowerCase().equals(targetLower) ||
                  character.getRole().toLowerCase().equals(targetLower))) {

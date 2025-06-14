@@ -7,30 +7,29 @@ import io.github.austinhoover.rpg.location.Location;
 import io.github.austinhoover.rpg.location.LocationMap;
 import io.github.austinhoover.rpg.location.RegionMap;
 import io.github.austinhoover.rpg.player.PlayerState;
+import io.github.austinhoover.rpg.world.World;
 
 public class MovementHandler {
-    private LocationMap graph;
-    private RegionMap regionMap;
+    private World world;
     private PlayerState player;
     private Kobold kobold;
     private ConversationHandler conversationHandler;
 
-    public MovementHandler(LocationMap graph, RegionMap regionMap, PlayerState player, Kobold kobold, ConversationHandler conversationHandler) {
-        this.graph = graph;
-        this.regionMap = regionMap;
+    public MovementHandler(World world, PlayerState player, Kobold kobold, ConversationHandler conversationHandler) {
+        this.world = world;
         this.player = player;
         this.kobold = kobold;
         this.conversationHandler = conversationHandler;
     }
 
     public boolean attemptMove(String targetName) {
-        Location current = graph.getLocationById(player.currentLocationId);
+        Location current = world.getLocationMap().getLocationById(player.currentLocationId);
         if (current == null) {
             System.out.println("Error: Invalid current location.");
             return false;
         }
 
-        Location neighbor = current.findConnectionTo(graph, targetName);
+        Location neighbor = current.findConnectionTo(world.getLocationMap(), targetName);
         if (neighbor == null) {
             System.out.println("Error: Failed to find neighbor location " + targetName);
             return false;
@@ -55,7 +54,7 @@ public class MovementHandler {
     }
 
     public void describeCurrentLocation(){
-        Location loc = graph.getLocationById(player.currentLocationId);
+        Location loc = world.getLocationMap().getLocationById(player.currentLocationId);
         if (loc == null) {
             System.out.println("Unknown location.");
             return;
@@ -63,7 +62,7 @@ public class MovementHandler {
         System.out.println("=== " + loc.generateFallbackLabel() + " ===");
         System.out.println(loc.getDescription());
         System.out.println("Exits:");
-        for(Location neighbor : loc.getNeighbors(graph)) {
+        for(Location neighbor : loc.getNeighbors(world.getLocationMap())) {
             System.out.println(" - " + neighbor.generateFallbackLabel());
         }
     }
@@ -73,12 +72,12 @@ public class MovementHandler {
      * @param kobold The kobold connection
      */
     public void lookForNearbyLocations(Kobold kobold){
-        Location existingLocation = this.graph.getLocationById(player.currentLocationId);
+        Location existingLocation = this.world.getLocationMap().getLocationById(player.currentLocationId);
         
         // If we've already generated neighbors for this location, just describe what's available
         if (existingLocation.hasGeneratedNeighbors()) {
             System.out.println("You look around and see the following places:");
-            for(Location neighbor : existingLocation.getNeighbors(graph)) {
+            for(Location neighbor : existingLocation.getNeighbors(world.getLocationMap())) {
                 if (neighbor.isDiscovered()) {
                     System.out.println(" - " + neighbor.generateFallbackLabel() + ": " + neighbor.getDescription());
                 } else {
@@ -89,17 +88,17 @@ public class MovementHandler {
         }
 
         // Generate new locations only if we haven't before
-        String prompt = existingLocation.generateNearbyLocationPrompt(graph);
+        String prompt = existingLocation.generateNearbyLocationPrompt(world.getLocationMap());
         String response = kobold.request(prompt);
 
         List<String> suggestions = Location.parseNearbyLocationResponse(response);
 
         for(String suggestion : suggestions){
-            if(!existingLocation.hasConnectionTo(graph, suggestion)){
-                Location newLoc = Location.create(graph, suggestion, "An undiscovered place.", existingLocation.getParentRegionId());
+            if(!existingLocation.hasConnectionTo(world.getLocationMap(), suggestion)){
+                Location newLoc = Location.create(world.getLocationMap(), suggestion, "An undiscovered place.", existingLocation.getParentRegionId());
                 existingLocation.addNeighbor(newLoc);
                 // Add the new location to the same region as the existing location
-                regionMap.getRegionById(existingLocation.getParentRegionId())
+                world.getRegionMap().getRegionById(existingLocation.getParentRegionId())
                     .ifPresent(region -> region.addLocation(newLoc));
                 System.out.println("You notice a new place: \"" + newLoc.getType() + "\" (undiscovered)");
             }
@@ -110,12 +109,12 @@ public class MovementHandler {
     }
 
     public String lookForNearbyLocationsWithReturn(Kobold kobold){
-        Location existingLocation = this.graph.getLocationById(player.currentLocationId);
+        Location existingLocation = this.world.getLocationMap().getLocationById(player.currentLocationId);
         StringBuilder sb = new StringBuilder();
         // If we've already generated neighbors for this location, just describe what's available
         if (existingLocation.hasGeneratedNeighbors()) {
             sb.append("You look around and see the following places:\n");
-            for(Location neighbor : existingLocation.getNeighbors(graph)) {
+            for(Location neighbor : existingLocation.getNeighbors(world.getLocationMap())) {
                 if (neighbor.isDiscovered()) {
                     sb.append(" - ").append(neighbor.generateFallbackLabel()).append(": ").append(neighbor.getDescription()).append("\n");
                 } else {
@@ -127,17 +126,17 @@ public class MovementHandler {
         }
 
         // Generate new locations only if we haven't before
-        String prompt = existingLocation.generateNearbyLocationPrompt(graph);
+        String prompt = existingLocation.generateNearbyLocationPrompt(world.getLocationMap());
         String response = kobold.request(prompt);
 
         List<String> suggestions = Location.parseNearbyLocationResponse(response);
 
         for(String suggestion : suggestions){
-            if(!existingLocation.hasConnectionTo(graph, suggestion)){
-                Location newLoc = Location.create(graph, suggestion, "An undiscovered place.", existingLocation.getParentRegionId());
+            if(!existingLocation.hasConnectionTo(world.getLocationMap(), suggestion)){
+                Location newLoc = Location.create(world.getLocationMap(), suggestion, "An undiscovered place.", existingLocation.getParentRegionId());
                 existingLocation.addNeighbor(newLoc);
                 // Add the new location to the same region as the existing location
-                regionMap.getRegionById(existingLocation.getParentRegionId())
+                world.getRegionMap().getRegionById(existingLocation.getParentRegionId())
                     .ifPresent(region -> region.addLocation(newLoc));
                 sb.append("You notice a new place: \"").append(newLoc.getType()).append("\" (undiscovered)\n");
             }

@@ -140,6 +140,9 @@ public class Location {
      * @param neighbor The neighbor
      */
     public void addNeighbor(Location neighbor){
+        if(this.neighbors == null){
+            this.neighbors = new ArrayList<>();
+        }
         if(!this.neighbors.contains(neighbor.getId())){
             this.neighbors.add(neighbor.getId());
             neighbor.addNeighbor(this);
@@ -152,6 +155,9 @@ public class Location {
      * @return The list of neighbors
      */
     public List<Location> getNeighbors(LocationMap graph){
+        if(this.neighbors == null){
+            return new ArrayList<>();
+        }
         return this.neighbors.stream().map((Long neighborId) -> graph.getLocationById(neighborId)).collect(Collectors.toList());
     }
 

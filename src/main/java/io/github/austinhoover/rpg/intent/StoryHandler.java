@@ -4,24 +4,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import io.github.austinhoover.rpg.character.Character;
-import io.github.austinhoover.rpg.character.CharacterMap;
 import io.github.austinhoover.kobold.Kobold;
 import io.github.austinhoover.rpg.location.Location;
-import io.github.austinhoover.rpg.location.LocationMap;
 import io.github.austinhoover.rpg.player.PlayerState;
+import io.github.austinhoover.rpg.world.World;
 
 public class StoryHandler {
-    private LocationMap graph;
-    private CharacterMap characters;
+    private World world;
     private PlayerState player;
     private Kobold kobold;
     private ConversationHandler conversationHandler;
     private GameLog gameLog;
 
-    public StoryHandler(LocationMap graph, CharacterMap characters, PlayerState player, 
+    public StoryHandler(World world, PlayerState player, 
                        Kobold kobold, ConversationHandler conversationHandler, GameLog gameLog) {
-        this.graph = graph;
-        this.characters = characters;
+        this.world = world;
         this.player = player;
         this.kobold = kobold;
         this.conversationHandler = conversationHandler;
@@ -29,7 +26,7 @@ public class StoryHandler {
     }
 
     public String handleUnknownIntent(String input) {
-        Location currentLocation = graph.getLocationById(player.currentLocationId);
+        Location currentLocation = world.getLocationMap().getLocationById(player.currentLocationId);
         if (currentLocation == null) {
             String errorMsg = "Error: Invalid current location.";
             System.out.println(errorMsg);
@@ -37,7 +34,7 @@ public class StoryHandler {
         }
 
         // Get nearby characters
-        List<Character> nearbyCharacters = characters.getAllCharacters().stream()
+        List<Character> nearbyCharacters = world.getCharacterMap().getAllCharacters().stream()
             .filter(c -> c.getCurrentLocationId() == currentLocation.getId())
             .collect(Collectors.toList());
 
