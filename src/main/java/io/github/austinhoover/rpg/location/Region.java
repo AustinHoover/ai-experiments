@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Optional;
 
+import io.github.austinhoover.kobold.Kobold;
+
 /**
  * Represents a region that can contain locations and nested regions
  */
@@ -15,7 +17,7 @@ public class Region {
     private final Set<Region> subregions;
     private Region parentRegion;
 
-    private Region(long id, String type, Optional<String> name) {
+    protected Region(long id, String type, Optional<String> name) {
         this.id = id;
         this.type = type;
         this.name = name;
@@ -30,8 +32,31 @@ public class Region {
      * @param name Optional name for the region
      * @return A new Region instance
      */
-    public static Region create(String type, Optional<String> name) {
-        return new Region(System.currentTimeMillis(), type, name);
+    public static Region create(RegionMap map, String type, Optional<String> name) {
+        return map.createRegion(type, name);
+    }
+
+    /**
+     * Generates a region type based on a user-provided summary
+     * @param kobold The Kobold instance to use for LLM requests
+     * @param summary The user-provided summary of the region
+     * @return The generated region type
+     */
+    public static String generateRegionType(Kobold kobold, String summary) {
+        String prompt = "You are the narrator of a text adventure game.\n" +
+                       "Based on the following description, what type of region would this be?\n" +
+                       "Description: " + summary + "\n\n" +
+                       "Examples of region types: city, forest, desert, mountain range, coastal area, etc.\n" +
+                       "Respond with ONLY the region type, nothing else. Keep it to 1-3 words.";
+        
+        String response = kobold.request(prompt).trim();
+        
+        // Clean up the response to ensure we get just the region type
+        return response.replaceAll("(?i)^(a|an|the)\\s+", "")  // Remove leading articles
+                      .replaceAll("\\s*\\([^)]*\\)", "")       // Remove parenthetical notes
+                      .replaceAll("\\s*\\.$", "")              // Remove trailing period
+                      .replaceAll("\\s+", " ")                 // Normalize whitespace
+                      .toLowerCase();                          // Convert to lowercase
     }
 
     public long getId() {

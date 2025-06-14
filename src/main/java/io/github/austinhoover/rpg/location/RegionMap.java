@@ -22,7 +22,7 @@ public class RegionMap {
      * @return The created region
      */
     public Region createRegion(String type, Optional<String> name) {
-        Region region = Region.create(type, name);
+        Region region = new Region(this.regions.size(), type, name);
         regions.put(region.getId(), region);
         return region;
     }
