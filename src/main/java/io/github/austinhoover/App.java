@@ -1,6 +1,7 @@
 package io.github.austinhoover;
 
 import java.util.Scanner;
+import java.util.Optional;
 
 import io.github.austinhoover.kobold.Kobold;
 import io.github.austinhoover.rpg.character.Character;
@@ -11,6 +12,8 @@ import io.github.austinhoover.rpg.intent.ConversationHandler;
 import io.github.austinhoover.rpg.intent.StoryHandler;
 import io.github.austinhoover.rpg.location.Location;
 import io.github.austinhoover.rpg.location.LocationMap;
+import io.github.austinhoover.rpg.location.Region;
+import io.github.austinhoover.rpg.location.RegionMap;
 import io.github.austinhoover.rpg.player.PlayerState;
 import io.github.austinhoover.rpg.intent.GameLog;
 
@@ -28,15 +31,25 @@ public final class App {
         CharacterMap characters = new CharacterMap();
         PlayerState player = new PlayerState();
         IntentParser parser = new IntentParser(kobold);
+        RegionMap regionMap = new RegionMap();
         ConversationHandler conversation = new ConversationHandler(graph, characters, player, kobold);
-        MovementHandler mover = new MovementHandler(graph, player, kobold, conversation);
+        MovementHandler mover = new MovementHandler(graph, regionMap, player, kobold, conversation);
         GameLog gameLog = new GameLog();
         StoryHandler story = new StoryHandler(graph, characters, player, kobold, conversation, gameLog);
 
         //create world
-        Location tavern = Location.create(graph, "tavern", "A warm tavern filled with rowdy patrons.");
-        Location cellar = Location.create(graph, "cellar", "A damp cellar beneath the tavern.");
-        Location alley = Location.create(graph, "alley", "A shadowy alley between tall buildings.");
+        Region city = regionMap.createRegion("city", Optional.of("Ravencrest"));
+        
+        Location tavern = Location.create(graph, "tavern", "A warm tavern filled with rowdy patrons.", city.getId());
+        Location cellar = Location.create(graph, "cellar", "A damp cellar beneath the tavern.", city.getId());
+        Location alley = Location.create(graph, "alley", "A shadowy alley between tall buildings.", city.getId());
+        
+        // Add locations to the city region
+        city.addLocation(tavern);
+        city.addLocation(cellar);
+        city.addLocation(alley);
+        
+        // Connect locations
         tavern.addNeighbor(alley);
         tavern.addNeighbor(cellar);
         player.currentLocationId = alley.getId();

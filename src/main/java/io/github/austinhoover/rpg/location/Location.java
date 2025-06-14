@@ -31,6 +31,11 @@ public class Location {
     private List<Long> neighbors = new LinkedList<Long>();
 
     /**
+     * The parent region's ID
+     */
+    private long parentRegionId;
+
+    /**
      * Tracks whether neighbors have generated or not
      */
     private boolean hasGeneratedNeighbors = false;
@@ -76,10 +81,12 @@ public class Location {
      * Constructor
      * @param type Type of the location
      * @param description Description of the location
+     * @param parentRegionId ID of the parent region
      */
-    private Location(String type, String description){
+    private Location(String type, String description, long parentRegionId){
         this.type = type;
         this.description = description;
+        this.parentRegionId = parentRegionId;
     }
 
     /**
@@ -87,10 +94,11 @@ public class Location {
      * @param map The location map
      * @param type The type of the location
      * @param description The description of the location
+     * @param parentRegionId ID of the parent region
      * @return The location
      */
-    public static Location create(LocationMap map, String type, String description){
-        Location rVal = new Location(type, description);
+    public static Location create(LocationMap map, String type, String description, long parentRegionId){
+        Location rVal = new Location(type, description, parentRegionId);
         map.register(rVal);
         return rVal;
     }
@@ -238,6 +246,22 @@ public class Location {
     public String generateFallbackLabel() {
         if (this.type != null) return "A " + this.type;
         return "An unknown place";
+    }
+
+    /**
+     * Gets the parent region ID
+     * @return The parent region ID
+     */
+    public long getParentRegionId() {
+        return parentRegionId;
+    }
+
+    /**
+     * Sets the parent region ID
+     * @param parentRegionId The new parent region ID
+     */
+    public void setParentRegionId(long parentRegionId) {
+        this.parentRegionId = parentRegionId;
     }
 
 }
