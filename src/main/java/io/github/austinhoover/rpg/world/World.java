@@ -9,6 +9,8 @@ import com.google.gson.Gson;
 import io.github.austinhoover.rpg.character.CharacterMap;
 import io.github.austinhoover.rpg.location.LocationMap;
 import io.github.austinhoover.rpg.location.RegionMap;
+import io.github.austinhoover.rpg.organization.OrganizationMap;
+import io.github.austinhoover.rpg.race.RaceMap;
 
 /**
  * Represents the complete game world state
@@ -19,6 +21,8 @@ public class World implements Serializable {
     private final RegionMap regionMap;
     private final LocationMap locationMap;
     private final CharacterMap characterMap;
+    private final OrganizationMap organizationMap;
+    private final RaceMap raceMap;
 
     /**
      * Creates a new world with empty maps
@@ -27,6 +31,8 @@ public class World implements Serializable {
         this.regionMap = new RegionMap();
         this.locationMap = new LocationMap();
         this.characterMap = new CharacterMap();
+        this.organizationMap = new OrganizationMap();
+        this.raceMap = new RaceMap();
     }
 
     public static World loadWorld(String filePath) {
@@ -63,4 +69,19 @@ public class World implements Serializable {
         return characterMap;
     }
 
+    /**
+     * Gets the organization map
+     * @return The organization map
+     */
+    public OrganizationMap getOrganizationMap() {
+        return organizationMap;
+    }
+
+    /**
+     * Gets the race map
+     * @return The race map
+     */
+    public RaceMap getRaceMap() {
+        return raceMap;
+    }
 } 

@@ -7,6 +7,7 @@ import io.github.austinhoover.rpg.intent.IntentParser;
 import io.github.austinhoover.rpg.intent.MovementHandler;
 import io.github.austinhoover.rpg.intent.ConversationHandler;
 import io.github.austinhoover.rpg.intent.StoryHandler;
+import io.github.austinhoover.rpg.model.DefaultGameData;
 import io.github.austinhoover.rpg.player.PlayerState;
 import io.github.austinhoover.rpg.world.World;
 import io.github.austinhoover.rpg.intent.GameLog;
@@ -20,6 +21,9 @@ public final class App {
      * Entrypoint to app
      */
     public static void main(String[] args){
+        // Load default game data
+        DefaultGameData defaultData = DefaultGameData.loadFromFile("data/defaultData.json");
+
         Kobold kobold = new Kobold();
         World world = World.loadWorld("data/testworld1.json");
         PlayerState player = new PlayerState();
