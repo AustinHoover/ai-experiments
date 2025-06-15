@@ -161,6 +161,10 @@ public class Location {
         return this.neighbors.stream().map((Long neighborId) -> graph.getLocationById(neighborId)).collect(Collectors.toList());
     }
 
+    public List<Long> getNeighborIds(){
+        return this.neighbors;
+    }
+
     /**
      * Gets the description of the location
      * @return The description of the location

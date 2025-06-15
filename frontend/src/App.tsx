@@ -6,17 +6,10 @@ import Map from './components/Map';
 
 const API_BASE_URL = 'http://localhost:8080';
 
-interface Location {
-    id: number;
-    type: string;
-    description: string;
-}
-
 function App() {
     const [messages, setMessages] = useState<string[]>([]);
     const [isSimulating, setIsSimulating] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
 
     const fetchMessages = async (retryCount = 0) => {
         try {
@@ -39,22 +32,6 @@ function App() {
         }
     };
 
-    const fetchCurrentLocation = async () => {
-        try {
-            const response = await fetch(`${API_BASE_URL}/location`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const location = await response.json();
-            setCurrentLocation(location);
-            // Add location description to messages
-            setMessages(prev => [...prev, `=== ${location.type} ===`, location.description]);
-        } catch (err) {
-            console.error('Error fetching current location:', err);
-            setError('Failed to fetch current location. Please try refreshing.');
-        }
-    };
-
     const handleSimulate = async (input: string) => {
         setIsSimulating(true);
         try {
@@ -70,8 +47,8 @@ function App() {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            // After simulation completes, refresh messages and location
-            await Promise.all([fetchMessages(), fetchCurrentLocation()]);
+            // After simulation completes, refresh messages
+            await fetchMessages();
         } catch (err) {
             console.error('Error during simulation:', err);
             setError('Failed to process command. Please try again.');
@@ -81,8 +58,7 @@ function App() {
     };
 
     useEffect(() => {
-        // Fetch both messages and current location on startup
-        Promise.all([fetchMessages(), fetchCurrentLocation()]);
+        fetchMessages();
     }, []);
 
     return (
@@ -92,7 +68,7 @@ function App() {
             </header>
             <main className="App-main">
                 <div className="App-content">
-                    <Map currentLocation={currentLocation} />
+                    <Map />
                     <div className="App-right-panel">
                         <MessageLog 
                             messages={messages} 

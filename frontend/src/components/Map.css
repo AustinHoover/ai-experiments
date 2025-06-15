@@ -1,12 +1,28 @@
 .map-container {
     background-color: #1a1a1a;
-    border: 1px solid #333;
-    border-radius: 4px;
+    border-radius: 8px;
     padding: 10px;
-    margin: 20px;
-    width: 300px;
-    height: 400px;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+}
+
+.map-error {
+    color: #ff6666;
+    background-color: #442222;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+}
+
+.map-loading {
+    color: #e0e0e0;
+    background-color: #2a2a4a;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    text-align: center;
 } 
