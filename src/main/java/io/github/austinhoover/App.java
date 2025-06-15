@@ -2,6 +2,9 @@ package io.github.austinhoover;
 
 import java.util.Scanner;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import io.github.austinhoover.rpg.Global;
 import io.github.austinhoover.rpg.model.DefaultGameData;
 import io.github.austinhoover.rpg.sim.Simulation;
@@ -10,7 +13,8 @@ import io.github.austinhoover.rpg.world.World;
 /**
  * Main app class
  */
-public final class App {
+@SpringBootApplication
+public class App {
 
     /**
      * Entrypoint to app
@@ -27,6 +31,9 @@ public final class App {
 
         System.out.println("\nType 'exit' to quit.");
         Global.mover.describeCurrentLocation();
+
+        // Start Spring Boot server
+        SpringApplication.run(App.class, args);
 
         while (true) {
             System.out.print("> ");

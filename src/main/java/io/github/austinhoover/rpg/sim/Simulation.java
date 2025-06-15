@@ -5,7 +5,7 @@ import io.github.austinhoover.rpg.intent.IntentParser;
 
 public class Simulation {
     
-    public static void simulate(String input){
+    public static String simulate(String input){
         IntentParser.Intent intent = Global.parser.parse(input);
         String response = null;
         switch (intent.type) {
@@ -29,6 +29,7 @@ public class Simulation {
             }
         }
         Global.gameLog.addEntry(input, response);
+        return response;
     }
 
 }
