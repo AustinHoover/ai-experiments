@@ -1,12 +1,13 @@
 package io.github.austinhoover.rpg.web.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
 
 import io.github.austinhoover.rpg.game.Global;
 import io.github.austinhoover.rpg.game.location.Location;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 public class LocationController {
     
     @GetMapping("/location")
@@ -16,5 +17,14 @@ public class LocationController {
             throw new RuntimeException("Current location not found");
         }
         return currentLocation;
+    }
+
+    @GetMapping("/location/{id}")
+    public ResponseEntity<Location> getLocation(@PathVariable long id) {
+        Location location = Global.world.getLocationMap().getLocationById(id);
+        if (location == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(location);
     }
 } 
