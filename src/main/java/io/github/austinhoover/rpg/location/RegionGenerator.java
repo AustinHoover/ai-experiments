@@ -1,7 +1,6 @@
 package io.github.austinhoover.rpg.location;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
