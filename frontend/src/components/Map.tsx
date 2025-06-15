@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
+import { useLocationCache } from '../hooks/useLocationCache';
 import './Map.css';
 
 interface Location {
@@ -36,14 +37,24 @@ const Map: React.FC<MapProps> = ({ currentLocationId }) => {
     const [isLoading, setIsLoading] = useState(true);
     const animationFrameRef = useRef<number>();
     const startTimeRef = useRef<number>(Date.now());
+    const { getLocation, setLocation } = useLocationCache();
 
     const fetchLocation = async (id: number): Promise<Location | null> => {
+        // Check cache first
+        const cachedLocation = getLocation(id);
+        if (cachedLocation) {
+            return cachedLocation;
+        }
+
         try {
             const response = await fetch(`${API_BASE_URL}/location/${id}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            return await response.json();
+            const location = await response.json();
+            // Cache the location
+            setLocation(location);
+            return location;
         } catch (err) {
             console.error(`Error fetching location ${id}:`, err);
             return null;
