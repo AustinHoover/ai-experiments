@@ -9,7 +9,10 @@ import com.google.gson.Gson;
 import io.github.austinhoover.rpg.character.CharacterMap;
 import io.github.austinhoover.rpg.location.LocationMap;
 import io.github.austinhoover.rpg.location.RegionMap;
+import io.github.austinhoover.rpg.model.DefaultGameData;
 import io.github.austinhoover.rpg.organization.OrganizationMap;
+import io.github.austinhoover.rpg.politics.PoliticalStateGenerator;
+import io.github.austinhoover.rpg.politics.PoliticalStateMap;
 import io.github.austinhoover.rpg.race.RaceMap;
 
 /**
@@ -23,6 +26,7 @@ public class World implements Serializable {
     private final CharacterMap characterMap;
     private final OrganizationMap organizationMap;
     private final RaceMap raceMap;
+    private final PoliticalStateMap politicalStateMap;
 
     /**
      * Creates a new world with empty maps
@@ -33,6 +37,23 @@ public class World implements Serializable {
         this.characterMap = new CharacterMap();
         this.organizationMap = new OrganizationMap();
         this.raceMap = new RaceMap();
+        this.politicalStateMap = new PoliticalStateMap();
+    }
+
+    /**
+     * Creates a new world with political states generated from default game data
+     * @param defaultData The default game data to use for generation
+     */
+    public World(DefaultGameData defaultData) {
+        this.regionMap = new RegionMap();
+        this.locationMap = new LocationMap();
+        this.characterMap = new CharacterMap();
+        this.organizationMap = new OrganizationMap();
+        this.raceMap = new RaceMap();
+        this.politicalStateMap = new PoliticalStateMap();
+
+        // Generate political states based on the races in default data
+        PoliticalStateGenerator.generateStates(this.politicalStateMap, defaultData.getRaces());
     }
 
     public static World loadWorld(String filePath) {
@@ -83,5 +104,13 @@ public class World implements Serializable {
      */
     public RaceMap getRaceMap() {
         return raceMap;
+    }
+
+    /**
+     * Gets the political state map
+     * @return The political state map
+     */
+    public PoliticalStateMap getPoliticalStateMap() {
+        return politicalStateMap;
     }
 } 

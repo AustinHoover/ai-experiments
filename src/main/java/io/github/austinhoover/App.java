@@ -23,6 +23,7 @@ public final class App {
     public static void main(String[] args){
         // Load default game data
         DefaultGameData defaultData = DefaultGameData.loadFromFile("data/defaultData.json");
+        new World(defaultData);
 
         Kobold kobold = new Kobold();
         World world = World.loadWorld("data/testworld1.json");

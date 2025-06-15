@@ -10,9 +10,11 @@ import java.util.Set;
  */
 public class RegionMap {
     private final Map<Long, Region> regions;
+    private Region topLevelRegion;
 
     public RegionMap() {
         this.regions = new HashMap<>();
+        this.topLevelRegion = null;
     }
 
     /**
@@ -24,6 +26,12 @@ public class RegionMap {
     public Region createRegion(String type, Optional<String> name) {
         Region region = new Region(this.regions.size(), type, name);
         regions.put(region.getId(), region);
+        
+        // If this is the first region, set it as the top level region
+        if (topLevelRegion == null) {
+            topLevelRegion = region;
+        }
+        
         return region;
     }
 
@@ -57,6 +65,15 @@ public class RegionMap {
                 parent.removeSubregion(region);
             }
         });
+        
+        // If we're removing the top level region, update it
+        if (region.equals(topLevelRegion)) {
+            // Find a new top level region (first region without a parent)
+            topLevelRegion = regions.values().stream()
+                .filter(r -> r.getParentRegionId().isEmpty())
+                .findFirst()
+                .orElse(null);
+        }
     }
 
     /**
@@ -64,19 +81,17 @@ public class RegionMap {
      * @param location The location to find
      * @return Optional containing the region if found
      */
-    public Optional<Region> findRegionContainingLocation(Location location) {
+    public Optional<Region> findRegionForLocation(Location location) {
         return regions.values().stream()
-            .filter(region -> region.containsLocation(location))
+            .filter(region -> region.getLocationIds().contains(location.getId()))
             .findFirst();
     }
 
     /**
-     * Gets all root regions (regions without parents)
-     * @return Set of root regions
+     * Gets the top level region of the world
+     * @return The top level region, or null if no regions exist
      */
-    public Set<Region> getRootRegions() {
-        return regions.values().stream()
-            .filter(region -> region.getParentRegionId().isEmpty())
-            .collect(java.util.stream.Collectors.toSet());
+    public Region getTopLevelRegion() {
+        return topLevelRegion;
     }
 } 
