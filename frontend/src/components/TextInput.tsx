@@ -1,36 +1,28 @@
 import React, { useState } from 'react';
 import './TextInput.css';
+import LoadingSpinner from './LoadingSpinner';
 
 interface TextInputProps {
-    onNewMessage: (message: string) => void;
+    onSubmit: (input: string) => void;
+    onSimulate: (input: string) => Promise<void>;
+    isSimulating: boolean;
 }
 
-const TextInput: React.FC<TextInputProps> = ({ onNewMessage }) => {
-    const [inputValue, setInputValue] = useState('');
+const TextInput: React.FC<TextInputProps> = ({ onSubmit, onSimulate, isSimulating }) => {
+    const [input, setInput] = useState('');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!inputValue.trim()) return;
+        if (!input.trim() || isSimulating) return;
 
+        const trimmedInput = input.trim();
+        setInput('');
+        onSubmit(trimmedInput);
+        
         try {
-            const response = await fetch('http://localhost:8080/simulate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: inputValue,
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const data = await response.text();
-            onNewMessage(data);
-            setInputValue(''); // Clear input after successful submission
+            await onSimulate(trimmedInput);
         } catch (error) {
             console.error('Error:', error);
-            onNewMessage('Error: Failed to process input');
         }
     };
 
@@ -38,13 +30,18 @@ const TextInput: React.FC<TextInputProps> = ({ onNewMessage }) => {
         <form className="text-input-container" onSubmit={handleSubmit}>
             <input
                 type="text"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Type your command here..."
                 className="text-input"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Enter your command..."
+                disabled={isSimulating}
             />
-            <button type="submit" className="submit-button">
-                Submit
+            <button 
+                type="submit" 
+                className="submit-button"
+                disabled={isSimulating || !input.trim()}
+            >
+                {isSimulating ? <LoadingSpinner /> : 'Submit'}
             </button>
         </form>
     );

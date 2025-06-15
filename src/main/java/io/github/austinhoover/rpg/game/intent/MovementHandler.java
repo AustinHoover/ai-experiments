@@ -152,4 +152,19 @@ public class MovementHandler {
            "\nDo not describe the surroundings of the location, just describe the location itself. " +
            "Do not include a name unless it's natural to do so in the prose.";
     }
+
+    public String describeCurrentLocationWithReturn() {
+        Location loc = world.getLocationMap().getLocationById(player.currentLocationId);
+        if (loc == null) {
+            return "Unknown location.";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("=== ").append(loc.generateFallbackLabel()).append(" ===\n");
+        sb.append(loc.getDescription()).append("\n");
+        sb.append("Exits:\n");
+        for(Location neighbor : loc.getNeighbors(world.getLocationMap())) {
+            sb.append(" - ").append(neighbor.generateFallbackLabel()).append("\n");
+        }
+        return sb.toString().trim();
+    }
 }

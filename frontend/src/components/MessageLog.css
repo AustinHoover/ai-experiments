@@ -1,32 +1,85 @@
 .message-log {
-    width: 100%;
-    height: 60vh; /* Takes up 60% of the viewport height */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     background-color: #1a1a1a;
     border: 1px solid #333;
     border-radius: 4px;
-    margin: 20px 0;
     overflow: hidden;
 }
 
+.message-log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #2a2a2a;
+    border-bottom: 1px solid #333;
+}
+
+.message-log-header h2 {
+    margin: 0;
+    color: #e0e0e0;
+    font-size: 1.2em;
+}
+
+.refresh-button {
+    padding: 8px 16px;
+    background-color: #444;
+    color: #e0e0e0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.refresh-button:hover {
+    background-color: #555;
+}
+
+.refresh-button:active {
+    background-color: #333;
+}
+
+.error-message {
+    padding: 10px 20px;
+    background-color: #442222;
+    color: #ff6666;
+    border-bottom: 1px solid #662222;
+    font-size: 0.9em;
+}
+
 .message-log-content {
-    height: 100%;
+    flex: 1;
     overflow-y: auto;
-    padding: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .message {
-    color: #e0e0e0;
-    margin-bottom: 8px;
-    padding: 8px;
-    border-bottom: 1px solid #333;
+    padding: 10px;
+    border-radius: 4px;
     font-family: 'Courier New', monospace;
+    line-height: 1.4;
 }
 
-.message:last-child {
-    border-bottom: none;
+.player-message {
+    background-color: #1a2a1a;
+    color: #90ee90;
+    align-self: flex-end;
+    max-width: 80%;
 }
 
-/* Customize scrollbar */
+.story-message {
+    background-color: #1a1a2a;
+    color: #e0e0e0;
+    align-self: flex-start;
+    max-width: 80%;
+}
+
+/* Custom scrollbar styles */
 .message-log-content::-webkit-scrollbar {
     width: 8px;
 }
@@ -36,10 +89,10 @@
 }
 
 .message-log-content::-webkit-scrollbar-thumb {
-    background: #444;
+    background: #333;
     border-radius: 4px;
 }
 
 .message-log-content::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: #444;
 } 

@@ -1,19 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import MessageLog from './components/MessageLog';
 import TextInput from './components/TextInput';
 
-function App() {
-  const [messages, setMessages] = useState<string[]>([
-    "Welcome to the RPG Game!",
-    "The world is being generated...",
-    "Loading game data...",
-    "Ready to begin your adventure!",
-  ]);
+const API_BASE_URL = 'http://localhost:8080';
 
-  const handleNewMessage = (message: string) => {
-    setMessages(prevMessages => [...prevMessages, message]);
+function App() {
+  const [messages, setMessages] = useState<string[]>([]);
+  const [isSimulating, setIsSimulating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchMessages = async (retryCount = 0) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/messages`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setMessages(data);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching messages:', err);
+      if (retryCount < 1) {
+        console.log('Retrying message fetch...');
+        setTimeout(() => fetchMessages(retryCount + 1), 1000);
+      } else {
+        setError('Failed to fetch messages. Please try refreshing.');
+        setMessages(['Error: Unable to load messages. Please try again.']);
+      }
+    }
   };
+
+  const handleSimulate = async (input: string) => {
+    setIsSimulating(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/simulate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ input }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // After simulation completes, refresh messages
+      await fetchMessages();
+    } catch (err) {
+      console.error('Error during simulation:', err);
+      setError('Failed to process command. Please try again.');
+    } finally {
+      setIsSimulating(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMessages();
+  }, []);
 
   return (
     <div className="App">
@@ -21,8 +66,16 @@ function App() {
         <h1>RPG Game</h1>
       </header>
       <main className="App-main">
-        <MessageLog messages={messages} />
-        <TextInput onNewMessage={handleNewMessage} />
+        <MessageLog 
+          messages={messages} 
+          onRefresh={() => fetchMessages()}
+          error={error}
+        />
+        <TextInput 
+          onSubmit={(input) => setMessages(prev => [...prev, '> ' + input])}
+          onSimulate={handleSimulate}
+          isSimulating={isSimulating}
+        />
       </main>
     </div>
   );

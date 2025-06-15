@@ -29,6 +29,10 @@ public class App {
 
         Global.player.currentLocationId = Global.world.getLocationMap().getLocationById(0).getId();
 
+        // Add initial location description to game log
+        String initialDescription = Global.mover.describeCurrentLocationWithReturn();
+        Global.gameLog.addEntry("", initialDescription);
+
         System.out.println("\nType 'exit' to quit.");
         Global.mover.describeCurrentLocation();
 
