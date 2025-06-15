@@ -21,16 +21,19 @@ interface GraphData {
     }>;
 }
 
+interface MapProps {
+    currentLocationId: number | null;
+}
+
 const API_BASE_URL = 'http://localhost:8080';
 const MAX_DEPTH = 5;
 const NODE_SIZE = 6;
 const GLOW_SIZE = 2.0; // Multiplier for glow radius
 
-const Map: React.FC = () => {
+const Map: React.FC<MapProps> = ({ currentLocationId }) => {
     const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [currentLocationId, setCurrentLocationId] = useState<number | null>(null);
     const animationFrameRef = useRef<number>();
     const startTimeRef = useRef<number>(Date.now());
 
@@ -80,17 +83,11 @@ const Map: React.FC = () => {
         return { nodes, links };
     };
 
-    const fetchMap = async () => {
+    const fetchMap = async (id: number) => {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await fetch(`${API_BASE_URL}/location`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const currentLocation = await response.json();
-            setCurrentLocationId(currentLocation.id);
-            const data = await buildGraph(currentLocation.id);
+            const data = await buildGraph(id);
             setGraphData(data);
         } catch (err) {
             console.error('Error fetching map:', err);
@@ -101,7 +98,12 @@ const Map: React.FC = () => {
     };
 
     useEffect(() => {
-        fetchMap();
+        if (currentLocationId !== null) {
+            fetchMap(currentLocationId);
+        }
+    }, [currentLocationId]);
+
+    useEffect(() => {
         return () => {
             if (animationFrameRef.current) {
                 cancelAnimationFrame(animationFrameRef.current);
@@ -114,7 +116,7 @@ const Map: React.FC = () => {
         const pulse = Math.sin(elapsed / 1000) * 0.5 + 0.5; // Oscillate between 0 and 1
         return {
             opacity: 0.15 + pulse * 0.1, // Pulse between 0.15 and 0.25
-            size: GLOW_SIZE + pulse * 0.2 // Pulse between 1.5 and 1.7
+            size: GLOW_SIZE + pulse * 0.2 // Pulse between 2.0 and 2.2
         };
     };
 

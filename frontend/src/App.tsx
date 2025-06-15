@@ -6,10 +6,11 @@ import Map from './components/Map';
 
 const API_BASE_URL = 'http://localhost:8080';
 
-function App() {
+const App: React.FC = () => {
     const [messages, setMessages] = useState<string[]>([]);
     const [isSimulating, setIsSimulating] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [currentLocationId, setCurrentLocationId] = useState<number | null>(null);
 
     const fetchMessages = async (retryCount = 0) => {
         try {
@@ -32,6 +33,19 @@ function App() {
         }
     };
 
+    const fetchCurrentLocation = async () => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/location`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            setCurrentLocationId(data.id);
+        } catch (err) {
+            console.error('Error fetching current location:', err);
+        }
+    };
+
     const handleSimulate = async (input: string) => {
         setIsSimulating(true);
         try {
@@ -47,8 +61,11 @@ function App() {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            // After simulation completes, refresh messages
-            await fetchMessages();
+            // After simulation completes, fetch both messages and current location
+            await Promise.all([
+                fetchMessages(),
+                fetchCurrentLocation()
+            ]);
         } catch (err) {
             console.error('Error during simulation:', err);
             setError('Failed to process command. Please try again.');
@@ -59,6 +76,7 @@ function App() {
 
     useEffect(() => {
         fetchMessages();
+        fetchCurrentLocation();
     }, []);
 
     return (
@@ -68,7 +86,7 @@ function App() {
             </header>
             <main className="App-main">
                 <div className="App-content">
-                    <Map />
+                    <Map currentLocationId={currentLocationId} />
                     <div className="App-right-panel">
                         <MessageLog 
                             messages={messages} 
@@ -85,6 +103,6 @@ function App() {
             </main>
         </div>
     );
-}
+};
 
 export default App; 
