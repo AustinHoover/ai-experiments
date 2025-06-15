@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.github.austinhoover.rpg.game.Global;
-import io.github.austinhoover.rpg.game.intent.GameLog.LogEntry;
 
 @RestController
 public class MessageLogController {
