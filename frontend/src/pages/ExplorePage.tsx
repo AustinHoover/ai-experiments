@@ -2,15 +2,24 @@ import React, { useState, useEffect } from 'react';
 import MessageLog from '../components/MessageLog';
 import TextInput from '../components/TextInput';
 import Map from '../components/Map';
+import NearbyElements from '../components/NearbyElements';
 import './ExplorePage.css';
 
 const API_BASE_URL = 'http://localhost:8080';
+
+interface Character {
+    id: number;
+    name: string;
+    role: string;
+    gender: string;
+}
 
 const ExplorePage: React.FC = () => {
     const [messages, setMessages] = useState<string[]>([]);
     const [isSimulating, setIsSimulating] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [currentLocationId, setCurrentLocationId] = useState<number | null>(null);
+    const [characters, setCharacters] = useState<Character[]>([]);
 
     const fetchMessages = async (retryCount = 0) => {
         try {
@@ -46,6 +55,22 @@ const ExplorePage: React.FC = () => {
         }
     };
 
+    const fetchCharacters = async () => {
+        if(currentLocationId === null) {
+            return;
+        }
+        try {
+            const response = await fetch(`${API_BASE_URL}/location/${currentLocationId}/characters`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch characters');
+            }
+            const data = await response.json();
+            setCharacters(data);
+        } catch (err) {
+            console.error('Error fetching characters:', err);
+        }
+    };
+
     const handleSimulate = async (input: string) => {
         setIsSimulating(true);
         try {
@@ -64,7 +89,7 @@ const ExplorePage: React.FC = () => {
             // After simulation completes, fetch both messages and current location
             await Promise.all([
                 fetchMessages(),
-                fetchCurrentLocation()
+                fetchCurrentLocation(),
             ]);
         } catch (err) {
             console.error('Error during simulation:', err);
@@ -74,10 +99,19 @@ const ExplorePage: React.FC = () => {
         }
     };
 
+    const handleRefresh = () => {
+        fetchMessages();
+        fetchCurrentLocation();
+    };
+
     useEffect(() => {
         fetchMessages();
         fetchCurrentLocation();
     }, []);
+
+    useEffect(() => {
+        fetchCharacters();
+    }, [currentLocationId]);
 
     return (
         <div className="explore-page">
@@ -86,7 +120,7 @@ const ExplorePage: React.FC = () => {
                 <div className="explore-right-panel">
                     <MessageLog 
                         messages={messages} 
-                        onRefresh={() => fetchMessages()}
+                        onRefresh={handleRefresh}
                         error={error}
                     />
                     <TextInput 
@@ -95,6 +129,7 @@ const ExplorePage: React.FC = () => {
                         isSimulating={isSimulating}
                     />
                 </div>
+                <NearbyElements characters={characters} />
             </div>
         </div>
     );

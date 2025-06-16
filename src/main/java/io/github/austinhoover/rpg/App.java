@@ -30,7 +30,7 @@ public class App {
         // Get user input for world generation
         Scanner scanner = new Scanner(System.in);
 
-        Global.player.currentLocationId = 0;
+        Global.player.currentLocationId = 1;
 
         // Add initial location description to game log
         String initialDescription = Global.mover.describeCurrentLocationWithReturn();

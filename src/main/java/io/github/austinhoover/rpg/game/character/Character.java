@@ -24,6 +24,11 @@ public class Character {
     private String role;
 
     /**
+     * Gender of the character
+     */
+    private String gender;
+
+    /**
      * Current location id of the character
      */
     private long currentLocationId;
@@ -32,11 +37,13 @@ public class Character {
      * Constructor
      * @param name Name of the character
      * @param role Role of the character
+     * @param gender Gender of the character
      * @param currentLocationId The current location id
      */
-    private Character(String name, String role, long currentLocationId) {
+    private Character(String name, String role, String gender, long currentLocationId) {
         this.name = name;
         this.role = role;
+        this.gender = gender;
         this.currentLocationId = currentLocationId;
     }
 
@@ -45,11 +52,12 @@ public class Character {
      * @param map The character map
      * @param name Name of the character
      * @param role Role of the character
+     * @param gender Gender of the character
      * @param currentLocationId The current location id
      * @return The character
      */
-    public static Character create(CharacterMap map, String name, String role, long currentLocationId) {
-        Character character = new Character(name, role, currentLocationId);
+    public static Character create(CharacterMap map, String name, String role, String gender, long currentLocationId) {
+        Character character = new Character(name, role, gender, currentLocationId);
         map.register(character);
         return character;
     }
@@ -84,6 +92,14 @@ public class Character {
      */
     public String getRole() {
         return role;
+    }
+
+    /**
+     * Gets the gender of the character
+     * @return The gender
+     */
+    public String getGender() {
+        return gender;
     }
 
     /**

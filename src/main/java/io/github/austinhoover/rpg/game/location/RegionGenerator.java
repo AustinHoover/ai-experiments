@@ -25,6 +25,10 @@ public class RegionGenerator {
         "baker", "tailor", "carpenter", "healer", "hunter"
     };
 
+    private static final String[] GENDERS = {
+        "male", "female"
+    };
+
     /**
      * Generates a continent with subregions for each political state
      * @param world The world to generate regions in
@@ -148,13 +152,15 @@ public class RegionGenerator {
         
         for (int i = 0; i < numCharacters; i++) {
             String role = TOWN_ROLES[random.nextInt(TOWN_ROLES.length)];
-            String name = RegionGenerator.generateName(world.getRaceMap().getRaceByName(state.getRace()), role);
+            String gender = GENDERS[random.nextInt(GENDERS.length)];
+            String name = RegionGenerator.generateName(world.getRaceMap().getRaceByName(state.getRace()), gender, role);
             
             // Create the character
             Character character = Character.create(
                 world.getCharacterMap(),
                 name,
                 role,
+                gender,
                 location.getId()
             );
 
@@ -163,9 +169,9 @@ public class RegionGenerator {
         }
     }
 
-    private static String generateName(Race race, String role){
+    private static String generateName(Race race, String gender, String role){
         String prompt = 
-            "I am generating names for characters for " + race.getName() + ". Can you give me a name? Please write just the name."
+            "I am generating names for characters for a " + gender + " " + race.getName() + ". Can you give me a name? Please write just the name."
         ;
         try {
             String response = Global.nameCache.getName(prompt);
