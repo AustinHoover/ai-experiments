@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import ExplorePage from './pages/ExplorePage';
+import CombatPage from './pages/CombatPage';
 
 const App: React.FC = () => {
     return (
@@ -13,6 +14,7 @@ const App: React.FC = () => {
                 <main className="App-main">
                     <Routes>
                         <Route path="/explore" element={<ExplorePage />} />
+                        <Route path="/combat" element={<CombatPage />} />
                         <Route path="/" element={<Navigate to="/explore" replace />} />
                     </Routes>
                 </main>
