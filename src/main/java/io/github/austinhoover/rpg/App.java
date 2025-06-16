@@ -22,12 +22,15 @@ public class App {
     public static void main(String[] args){
         // Load default game data
         DefaultGameData defaultData = DefaultGameData.loadFromFile("data/defaultData.json");
-        new World(defaultData);
+        Global.world = new World(defaultData);
+        Global.conversation.setWorld(Global.world);
+        Global.mover.setWorld(Global.world);
+        Global.story.setWorld(Global.world);
 
         // Get user input for world generation
         Scanner scanner = new Scanner(System.in);
 
-        Global.player.currentLocationId = Global.world.getLocationMap().getLocationById(0).getId();
+        Global.player.currentLocationId = 0;
 
         // Add initial location description to game log
         String initialDescription = Global.mover.describeCurrentLocationWithReturn();

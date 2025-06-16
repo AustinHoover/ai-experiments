@@ -108,4 +108,12 @@ public class StoryHandler {
         gameLog.addEntry(input, response);
         return response;
     }
+
+    /**
+     * Sets the world instance
+     * @param world The world instance to set
+     */
+    public void setWorld(World world) {
+        this.world = world;
+    }
 } 

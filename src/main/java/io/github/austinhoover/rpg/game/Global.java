@@ -12,7 +12,7 @@ import io.github.austinhoover.rpg.game.world.World;
 public class Global {
     
     public static Kobold kobold = new Kobold();
-    public static World world = World.loadWorld("data/testworld1.json");
+    public static World world = new World();
     public static PlayerState player = new PlayerState();
     public static IntentParser parser = new IntentParser(kobold);
     public static ConversationHandler conversation = new ConversationHandler(world, player, kobold);

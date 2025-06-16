@@ -167,4 +167,8 @@ public class MovementHandler {
         }
         return sb.toString().trim();
     }
+
+    public void setWorld(World world) {
+        this.world = world;
+    }
 }

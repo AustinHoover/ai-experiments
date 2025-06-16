@@ -80,26 +80,40 @@ const Map: React.FC<MapProps> = ({ currentLocationId }) => {
         }];
 
         const links: Array<{ source: number; target: number }> = [];
-        const neighborPromises = location.neighborIds
-            .filter(id => !visited.has(id))
-            .map(async (neighborId) => {
-                const neighborGraph = await buildGraph(neighborId, depth + 1, visited);
-                nodes.push(...neighborGraph.nodes);
-                links.push(
-                    { source: location.id, target: neighborId },
-                    ...neighborGraph.links
-                );
-            });
-
-        await Promise.all(neighborPromises);
+        if(depth < MAX_DEPTH) {
+            const neighborPromises = location.neighborIds
+                .filter(id => !visited.has(id))
+                .map(async (neighborId) => {
+                    const neighborGraph = await buildGraph(neighborId, depth + 1, visited);
+                    nodes.push(...neighborGraph.nodes);
+                    links.push(
+                        { source: location.id, target: neighborId },
+                        ...neighborGraph.links
+                    );
+                });
+            await Promise.all(neighborPromises);
+        }
         return { nodes, links };
     };
+
+    const validateGraph = (graph: GraphData) => {
+        // Check that all nodes have a valid id
+        for (const link of graph.links) {
+            if (graph.nodes.find(node => node.id === link.source) === undefined || graph.nodes.find(node => node.id === link.target) === undefined) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     const fetchMap = async (id: number) => {
         setIsLoading(true);
         setError(null);
         try {
             const data = await buildGraph(id);
+            if (!validateGraph(data)) {
+                throw new Error('Invalid graph');
+            }
             setGraphData(data);
         } catch (err) {
             console.error('Error fetching map:', err);

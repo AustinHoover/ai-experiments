@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import com.google.gson.Gson;
 
 import io.github.austinhoover.rpg.game.location.LocationMap;
+import io.github.austinhoover.rpg.game.location.RegionGenerator;
 import io.github.austinhoover.rpg.game.location.RegionMap;
 import io.github.austinhoover.rpg.game.organization.OrganizationMap;
 import io.github.austinhoover.rpg.game.character.CharacterMap;
@@ -54,6 +55,7 @@ public class World implements Serializable {
 
         // Generate political states based on the races in default data
         PoliticalStateGenerator.generateStates(this.politicalStateMap, defaultData.getRaces());
+        RegionGenerator.generateContinent(this);
     }
 
     public static World loadWorld(String filePath) {

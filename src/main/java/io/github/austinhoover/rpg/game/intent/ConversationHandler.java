@@ -185,4 +185,8 @@ public class ConversationHandler {
     public Conversation getCurrentConversation() {
         return currentConversation;
     }
+
+    public void setWorld(World world) {
+        this.world = world;
+    }
 } 
