@@ -1,14 +1,15 @@
 package io.github.austinhoover.rpg;
 
-import java.util.Scanner;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import io.github.austinhoover.rpg.process.ProcessManager;
+import io.github.austinhoover.rpg.process.ServiceConfig;
+import io.github.austinhoover.rpg.game.sim.Simulation;
+import io.github.austinhoover.rpg.game.world.World;
+import java.util.Scanner;
 
 import io.github.austinhoover.rpg.game.Global;
 import io.github.austinhoover.rpg.game.model.DefaultGameData;
-import io.github.austinhoover.rpg.game.sim.Simulation;
-import io.github.austinhoover.rpg.game.world.World;
 
 /**
  * Main app class
@@ -19,7 +20,21 @@ public class App {
     /**
      * Entrypoint to app
      */
-    public static void main(String[] args){
+    public static void main(String[] args) {
+        // Add shutdown hook to clean up processes
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("Shutting down application...");
+            ProcessManager.INSTANCE.shutdownAll();
+        }));
+
+        ServiceConfig koboldConfig = ProcessManager.INSTANCE.loadConfigFile("kobold");
+        if(koboldConfig != null) {
+            ProcessManager.INSTANCE.registerService(koboldConfig);
+            ProcessManager.INSTANCE.startService("kobold");
+        } else {
+            System.out.println("Failed to load kobold config");
+        }
+
         // Load default game data
         DefaultGameData defaultData = DefaultGameData.loadFromFile("data/defaultData.json");
         Global.world = new World(defaultData);

@@ -3,9 +3,13 @@ package io.github.austinhoover.rpg.process;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
+
+import com.google.gson.Gson;
+
 import java.util.logging.Level;
 
 /**
@@ -16,9 +20,36 @@ public class ProcessManager {
     private final Map<String, Process> runningProcesses;
     private final Map<String, ServiceConfig> serviceConfigs;
 
+    public static final ProcessManager INSTANCE = new ProcessManager();
+
     public ProcessManager() {
         this.runningProcesses = new ConcurrentHashMap<>();
         this.serviceConfigs = new HashMap<>();
+    }
+
+    /**
+     * Load a service configuration from a JSON file
+     * @param configName The name of the configuration file (without .json extension)
+     * @return The contents of the config file as a string, or null if not found
+     */
+    public ServiceConfig loadConfigFile(String configName) {
+        String configPath = "data/cfg/" + configName + ".json";
+        File configFile = new File(configPath);
+        
+        if (!configFile.exists()) {
+            logger.warning("Config file not found: " + configPath);
+            return null;
+        }
+
+        try {
+            String content = new String(java.nio.file.Files.readAllBytes(configFile.toPath()));
+            Gson gson = new Gson();
+            ServiceConfig config = gson.fromJson(content, ServiceConfig.class);
+            return config;
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Error reading config file: " + configPath, e);
+            return null;
+        }
     }
 
     /**
@@ -60,6 +91,8 @@ public class ProcessManager {
 
             // Redirect error stream to output stream
             processBuilder.redirectErrorStream(true);
+
+            System.out.println(config.getWorkingDirectory() + " " + config.getCommand() + " " + config.getArguments());
 
             // Start the process
             Process process = processBuilder.start();
@@ -137,5 +170,16 @@ public class ProcessManager {
             status.put(serviceName, isServiceRunning(serviceName));
         }
         return status;
+    }
+
+    /**
+     * Shuts down all currently running processes
+     */
+    public void shutdownAll() {
+        logger.info("Shutting down all running processes...");
+        for (String serviceName : new ArrayList<>(runningProcesses.keySet())) {
+            stopService(serviceName);
+        }
+        runningProcesses.clear();
     }
 } 

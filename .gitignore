@@ -28,3 +28,6 @@ replay_pid*
 
 # Cache-related
 /.cache
+
+# Per-user config stuff
+/data/cfg/**
