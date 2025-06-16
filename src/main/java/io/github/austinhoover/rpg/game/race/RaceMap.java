@@ -39,4 +39,18 @@ public class RaceMap {
     public Collection<Race> getAllRaces() {
         return idRaceMap.values();
     }
+    
+    /**
+     * Gets a race by its name
+     * @param name The name
+     * @return The race, or null if not found
+     */
+    public Race getRaceByName(String name) {
+        for (Race race : idRaceMap.values()) {
+            if (race.getName().equalsIgnoreCase(name)) {
+                return race;
+            }
+        }
+        return null;
+    }
 } 

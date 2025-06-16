@@ -6,7 +6,9 @@ import java.util.Optional;
 import java.util.Random;
 
 import io.github.austinhoover.rpg.game.politics.PoliticalState;
+import io.github.austinhoover.rpg.game.race.Race;
 import io.github.austinhoover.rpg.game.world.World;
+import io.github.austinhoover.rpg.game.Global;
 import io.github.austinhoover.rpg.game.character.Character;
 
 /**
@@ -146,7 +148,7 @@ public class RegionGenerator {
         
         for (int i = 0; i < numCharacters; i++) {
             String role = TOWN_ROLES[random.nextInt(TOWN_ROLES.length)];
-            String name = String.format("%s %s", state.getRace(), role);
+            String name = RegionGenerator.generateName(world.getRaceMap().getRaceByName(state.getRace()), role);
             
             // Create the character
             Character character = Character.create(
@@ -160,4 +162,18 @@ public class RegionGenerator {
             location.getCharacterIds().add(character.getId());
         }
     }
+
+    private static String generateName(Race race, String role){
+        String prompt = 
+            "I am generating names for characters for " + race.getName() + ". Can you give me a name? Please write just the name."
+        ;
+        try {
+            String response = Global.nameCache.getName(prompt);
+            return response.equals("null") ? null : response;
+        } catch (Exception e) {
+            System.err.println("Error calling LLM: " + e.getMessage());
+            return null;
+        }
+    }
+
 } 

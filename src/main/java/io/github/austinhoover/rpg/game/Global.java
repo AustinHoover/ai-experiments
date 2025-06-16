@@ -1,5 +1,7 @@
 package io.github.austinhoover.rpg.game;
 
+import java.util.Random;
+
 import io.github.austinhoover.rpg.kobold.Kobold;
 import io.github.austinhoover.rpg.game.intent.ConversationHandler;
 import io.github.austinhoover.rpg.game.intent.GameLog;
@@ -8,6 +10,7 @@ import io.github.austinhoover.rpg.game.intent.MovementHandler;
 import io.github.austinhoover.rpg.game.intent.StoryHandler;
 import io.github.austinhoover.rpg.game.player.PlayerState;
 import io.github.austinhoover.rpg.game.world.World;
+import io.github.austinhoover.rpg.game.name.NameCacheService;
 
 public class Global {
     
@@ -19,5 +22,6 @@ public class Global {
     public static MovementHandler mover = new MovementHandler(world, player, kobold, conversation);
     public static GameLog gameLog = new GameLog();
     public static StoryHandler story = new StoryHandler(world, player, kobold, conversation, gameLog);
+    public static NameCacheService nameCache = new NameCacheService(new Random());
 
 }

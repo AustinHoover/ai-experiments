@@ -14,6 +14,7 @@ import io.github.austinhoover.rpg.game.character.CharacterMap;
 import io.github.austinhoover.rpg.game.model.DefaultGameData;
 import io.github.austinhoover.rpg.game.politics.PoliticalStateGenerator;
 import io.github.austinhoover.rpg.game.politics.PoliticalStateMap;
+import io.github.austinhoover.rpg.game.race.Race;
 import io.github.austinhoover.rpg.game.race.RaceMap;
 
 /**
@@ -52,6 +53,10 @@ public class World implements Serializable {
         this.organizationMap = new OrganizationMap();
         this.raceMap = new RaceMap();
         this.politicalStateMap = new PoliticalStateMap();
+
+        for(String raceName : defaultData.getRaces()) {
+            Race.create(this.raceMap, raceName);
+        }
 
         // Generate political states based on the races in default data
         PoliticalStateGenerator.generateStates(this.politicalStateMap, defaultData.getRaces());
