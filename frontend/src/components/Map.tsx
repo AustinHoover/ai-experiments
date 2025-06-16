@@ -35,6 +35,7 @@ const Map: React.FC<MapProps> = ({ currentLocationId }) => {
     const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
     const animationFrameRef = useRef<number>();
     const startTimeRef = useRef<number>(Date.now());
     const { getLocation, setLocation } = useLocationCache();
@@ -108,6 +109,14 @@ const Map: React.FC<MapProps> = ({ currentLocationId }) => {
         }
     };
 
+    // Effect to refresh current location data when it changes
+    useEffect(() => {
+        if (currentLocationId !== null) {
+            fetchLocation(currentLocationId);
+        }
+    }, [currentLocationId]);
+
+    // Effect to build the graph
     useEffect(() => {
         if (currentLocationId !== null) {
             fetchMap(currentLocationId);
@@ -201,6 +210,19 @@ const Map: React.FC<MapProps> = ({ currentLocationId }) => {
                     );
                 }}
             />
+            {currentLocationId && (
+                <div className="location-description-container">
+                    <div className={`location-description ${isDescriptionExpanded ? 'expanded' : 'collapsed'}`}>
+                        {getLocation(currentLocationId)?.description || 'Loading description...'}
+                    </div>
+                    <button 
+                        className="description-toggle"
+                        onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                    >
+                        {isDescriptionExpanded ? 'Show Less' : 'Show More'}
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

@@ -1,28 +1,97 @@
 .map-container {
-    background-color: #1a1a1a;
-    border-radius: 8px;
-    padding: 10px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    height: 100%;
+    gap: 8px;
+    padding: 8px;
+    background-color: #1a1a1a;
+    border-radius: 8px;
+    border: 1px solid #2a2a4a;
+    box-shadow: 
+        0 2px 4px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(74, 74, 138, 0.1),
+        inset 0 0 20px rgba(0, 0, 0, 0.2);
+    width: 320px;
+    max-height: 500px;
 }
 
 .map-error {
     color: #ff6666;
     background-color: #442222;
-    padding: 8px 12px;
+    padding: 6px 10px;
     border-radius: 4px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     font-size: 0.9em;
+    border: 1px solid rgba(255, 102, 102, 0.2);
 }
 
 .map-loading {
+    color: #a0a0a0;
+    text-align: center;
+    padding: 8px;
+    font-style: italic;
+}
+
+.location-description-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.description-toggle {
+    background-color: #2a2a4a;
+    color: #e0e0e0;
+    border: 1px solid #4a4a8a;
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.description-toggle:hover {
+    background-color: #3a3a5a;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transform: translateY(-1px);
+}
+
+.description-toggle:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.location-description {
     color: #e0e0e0;
     background-color: #2a2a4a;
-    padding: 8px 12px;
+    padding: 10px;
     border-radius: 4px;
-    margin-bottom: 10px;
     font-size: 0.9em;
-    text-align: center;
+    line-height: 1.4;
+    border: 1px solid #4a4a8a;
+    max-width: 100%;
+    word-wrap: break-word;
+    transition: max-height 0.3s ease-out;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.location-description.collapsed {
+    max-height: 3.5em; /* Show approximately 2.5 lines of text */
+    overflow: hidden;
+    position: relative;
+}
+
+.location-description.collapsed::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2em;
+    background: linear-gradient(transparent, #2a2a4a);
+    pointer-events: none;
+}
+
+.location-description.expanded {
+    max-height: 1000px; /* Arbitrary large value to accommodate content */
 } 
