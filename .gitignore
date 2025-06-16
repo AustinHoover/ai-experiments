@@ -25,3 +25,6 @@ replay_pid*
 
 # Frontend-related
 /frontend/node_modules
+
+# Cache-related
+/.cache
