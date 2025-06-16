@@ -13,7 +13,7 @@ const MessageLog: React.FC<MessageLogProps> = ({ messages, onRefresh, error }) =
     return (
         <div className="message-log">
             <div className="message-log-header">
-                <h2>Game Log</h2>
+                <div className="message-log-title">Game Log</div>
                 <button 
                     className="refresh-button"
                     onClick={onRefresh}
@@ -22,8 +22,8 @@ const MessageLog: React.FC<MessageLogProps> = ({ messages, onRefresh, error }) =
                     ↻
                 </button>
             </div>
-            {error && <div className="error-message">{error}</div>}
             <div className="message-log-content">
+                {error && <div className="error-message">{error}</div>}
                 {messages.map((message, index) => (
                     <div 
                         key={index} 
