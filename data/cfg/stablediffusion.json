@@ -1,8 +1,0 @@
-{
-    "name": "stablediffusion",
-    "command": "bash",
-    "arguments" : [
-        "webui-user.bat"
-    ],
-    "workingDirectory": "DIRECTORY_HERE"
-}
