@@ -12,6 +12,7 @@ import java.util.Arrays;
 import com.google.gson.Gson;
 
 import io.github.austinhoover.rpg.kobold.response.KoboldResponseBody;
+import io.github.austinhoover.rpg.process.ProcessManager;
 
 /**
  * Main object for interfacing with a koboldcpp endpoint
@@ -74,6 +75,11 @@ public class Kobold {
      * @return The resulting text
      */
     public String generate(KoboldRequestBody requestBody){
+        // Check if Kobold service is running, start it if not
+        if (!ProcessManager.INSTANCE.isServiceRunning("kobold")) {
+            ProcessManager.INSTANCE.startService("kobold");
+        }
+
         String rVal = null;
         HttpClient httpClient = HttpClient.newHttpClient();
         Gson gson = new Gson();
