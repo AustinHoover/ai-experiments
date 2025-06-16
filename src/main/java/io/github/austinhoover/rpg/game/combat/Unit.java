@@ -35,16 +35,23 @@ public class Unit {
     private int maxHealth;
 
     /**
+     * Speed stat of the unit, determines turn order
+     */
+    private int speed;
+
+    /**
      * Constructor
      * @param name Name of the unit
      * @param character Optional character associated with this unit
      * @param maxHealth Maximum health of the unit
+     * @param speed Speed stat of the unit
      */
-    private Unit(String name, Optional<Character> character, int maxHealth) {
+    private Unit(String name, Optional<Character> character, int maxHealth, int speed) {
         this.name = name;
         this.character = character;
         this.maxHealth = maxHealth;
         this.currentHealth = maxHealth;
+        this.speed = speed;
     }
 
     /**
@@ -53,10 +60,11 @@ public class Unit {
      * @param name Name of the unit
      * @param character Optional character associated with this unit
      * @param maxHealth Maximum health of the unit
+     * @param speed Speed stat of the unit
      * @return The created unit
      */
-    public static Unit create(UnitMap map, String name, Optional<Character> character, int maxHealth) {
-        Unit unit = new Unit(name, character, maxHealth);
+    public static Unit create(UnitMap map, String name, Optional<Character> character, int maxHealth, int speed) {
+        Unit unit = new Unit(name, character, maxHealth, speed);
         map.register(unit);
         return unit;
     }
@@ -115,6 +123,22 @@ public class Unit {
      */
     public int getMaxHealth() {
         return maxHealth;
+    }
+
+    /**
+     * Gets the speed stat of the unit
+     * @return The speed stat
+     */
+    public int getSpeed() {
+        return speed;
+    }
+
+    /**
+     * Sets the speed stat of the unit
+     * @param speed The new speed value
+     */
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
 
     /**
