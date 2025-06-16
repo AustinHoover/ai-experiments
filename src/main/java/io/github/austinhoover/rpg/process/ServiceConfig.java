@@ -11,12 +11,14 @@ public class ServiceConfig {
     private String command;
     private List<String> arguments;
     private String workingDirectory;
+    private List<String> mutuallyExclusiveServices;
 
     public ServiceConfig(String name, String command) {
         this.name = name;
         this.command = command;
         this.arguments = new ArrayList<>();
         this.workingDirectory = null;
+        this.mutuallyExclusiveServices = new ArrayList<>();
     }
 
     public String getName() {
@@ -41,6 +43,33 @@ public class ServiceConfig {
 
     public void setWorkingDirectory(String workingDirectory) {
         this.workingDirectory = workingDirectory;
+    }
+
+    /**
+     * Get the list of services that are mutually exclusive with this service
+     * @return List of service names that cannot run alongside this service
+     */
+    public List<String> getMutuallyExclusiveServices() {
+        return mutuallyExclusiveServices;
+    }
+
+    /**
+     * Add a service to the list of mutually exclusive services
+     * @param serviceName The name of the service that cannot run alongside this service
+     */
+    public void addMutuallyExclusiveService(String serviceName) {
+        if (!mutuallyExclusiveServices.contains(serviceName)) {
+            mutuallyExclusiveServices.add(serviceName);
+        }
+    }
+
+    /**
+     * Check if a given service is mutually exclusive with this service
+     * @param serviceName The name of the service to check
+     * @return true if the service cannot run alongside this service
+     */
+    public boolean isMutuallyExclusiveWith(String serviceName) {
+        return mutuallyExclusiveServices.contains(serviceName);
     }
 
     @Override
