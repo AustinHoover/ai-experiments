@@ -46,6 +46,11 @@ public class Location {
     private boolean isDiscovered = false;
 
     /**
+     * List of character IDs present in this location
+     */
+    private List<Long> characterIds = new ArrayList<>();
+
+    /**
      * Sets whether neighbors have been generated for this location
      * @param hasGenerated Whether neighbors have been generated
      */
@@ -272,6 +277,22 @@ public class Location {
      */
     public void setParentRegionId(long parentRegionId) {
         this.parentRegionId = parentRegionId;
+    }
+
+    /**
+     * Gets the list of character IDs in this location
+     * @return List of character IDs
+     */
+    public List<Long> getCharacterIds() {
+        return characterIds;
+    }
+
+    /**
+     * Sets the list of character IDs in this location
+     * @param characterIds List of character IDs
+     */
+    public void setCharacterIds(List<Long> characterIds) {
+        this.characterIds = characterIds;
     }
 
 }

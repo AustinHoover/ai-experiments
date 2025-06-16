@@ -1,5 +1,8 @@
 package io.github.austinhoover.rpg.game.character;
 
+import io.github.austinhoover.rpg.game.location.Location;
+import io.github.austinhoover.rpg.game.location.LocationMap;
+
 /**
  * Represents a character in the world
  */
@@ -97,5 +100,25 @@ public class Character {
      */
     public void setCurrentLocationId(long currentLocationId) {
         this.currentLocationId = currentLocationId;
+    }
+
+    /**
+     * Moves the character to a new location and updates the characterIds lists in both the original and destination locations.
+     * @param newLocationId The ID of the new location
+     * @param locationMap The map of locations
+     */
+    public void moveToLocation(long newLocationId, LocationMap locationMap) {
+        if (newLocationId == currentLocationId) {
+            return; // No change needed
+        }
+        Location oldLocation = locationMap.getLocationById(currentLocationId);
+        Location newLocation = locationMap.getLocationById(newLocationId);
+        if (oldLocation != null) {
+            oldLocation.getCharacterIds().remove(this.id);
+        }
+        if (newLocation != null) {
+            newLocation.getCharacterIds().add(this.id);
+        }
+        this.currentLocationId = newLocationId;
     }
 } 

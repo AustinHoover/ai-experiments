@@ -7,6 +7,7 @@ import java.util.Random;
 
 import io.github.austinhoover.rpg.game.politics.PoliticalState;
 import io.github.austinhoover.rpg.game.world.World;
+import io.github.austinhoover.rpg.game.character.Character;
 
 /**
  * Generates regions for the world
@@ -17,6 +18,11 @@ public class RegionGenerator {
         "town", "village", "hamlet", "settlement", "outpost"
     };
     
+    private static final String[] TOWN_ROLES = {
+        "innkeeper", "blacksmith", "merchant", "guard", "farmer",
+        "baker", "tailor", "carpenter", "healer", "hunter"
+    };
+
     /**
      * Generates a continent with subregions for each political state
      * @param world The world to generate regions in
@@ -52,7 +58,7 @@ public class RegionGenerator {
             stateLocations.add(stateLocation);
             
             // Generate towns within this state's territory
-            generateTown(world.getRegionMap(), world.getLocationMap(), stateRegion, state, stateLocation);
+            generateTown(world, stateRegion, state, stateLocation);
         });
         
         // Create a sparse but connected graph of locations
@@ -90,13 +96,12 @@ public class RegionGenerator {
 
     /**
      * Generates towns within a region for a given political state
-     * @param regionMap The map to register new regions with
-     * @param locationMap The map to register new locations with
+     * @param world The world instance
      * @param region The region to generate towns in
      * @param state The political state that owns these towns
      * @param stateCapital The capital location of the state
      */
-    public static void generateTown(RegionMap regionMap, LocationMap locationMap, Region region, PoliticalState state, Location stateCapital) {
+    public static void generateTown(World world, Region region, PoliticalState state, Location stateCapital) {
         // Generate 2-4 towns for each state
         int numTowns = random.nextInt(3) + 2;
         
@@ -105,14 +110,14 @@ public class RegionGenerator {
             String townName = String.format("%s %s %d", state.getRace(), townType, i + 1);
             
             // Create the town region
-            Region town = Region.create(regionMap, townType, Optional.of(townName));
+            Region town = Region.create(world.getRegionMap(), townType, Optional.of(townName));
             
             // Add it as a subregion of the state's territory
             region.addSubregion(town);
             
             // Create a location for this town
             Location townLocation = Location.create(
-                locationMap,
+                world.getLocationMap(),
                 townType,
                 String.format("A %s in the territory of %s.", townType, state.getName()),
                 town.getId()
@@ -123,6 +128,36 @@ public class RegionGenerator {
             
             // Connect the town to the state capital
             townLocation.addNeighbor(stateCapital);
+
+            // Generate characters for this town
+            generateTownCharacters(world, state, townLocation);
+        }
+    }
+
+    /**
+     * Generates characters for a town
+     * @param world The world instance
+     * @param state The political state that owns the town
+     * @param location The town location
+     */
+    private static void generateTownCharacters(World world, PoliticalState state, Location location) {
+        // Generate 3-6 characters for each town
+        int numCharacters = random.nextInt(4) + 3;
+        
+        for (int i = 0; i < numCharacters; i++) {
+            String role = TOWN_ROLES[random.nextInt(TOWN_ROLES.length)];
+            String name = String.format("%s %s", state.getRace(), role);
+            
+            // Create the character
+            Character character = Character.create(
+                world.getCharacterMap(),
+                name,
+                role,
+                location.getId()
+            );
+
+            // Add the character to the location's character list
+            location.getCharacterIds().add(character.getId());
         }
     }
 } 

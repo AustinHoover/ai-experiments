@@ -8,12 +8,14 @@ public class LocationDTO {
     private String type;
     private String description;
     private List<Long> neighborIds;
+    private List<Long> characterIds;
 
     public LocationDTO(Location location) {
         this.id = location.getId();
         this.type = location.getType();
         this.description = location.getDescription();
         this.neighborIds = location.getNeighborIds();
+        this.characterIds = location.getCharacterIds();
     }
 
     public long getId() {
@@ -30,5 +32,9 @@ public class LocationDTO {
 
     public List<Long> getNeighborIds() {
         return neighborIds;
+    }
+
+    public List<Long> getCharacterIds() {
+        return characterIds;
     }
 } 
