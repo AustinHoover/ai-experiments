@@ -1,8 +1,0 @@
-{
-    "name": "kobold",
-    "command": "bash",
-    "arguments" : [
-        "kobold.exe","--config","CONFIG_HERE"
-    ],
-    "workingDirectory": "DIRECTORY_HERE"
-}
