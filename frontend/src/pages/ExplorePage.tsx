@@ -4,6 +4,7 @@ import TextInput from '../components/TextInput';
 import Map from '../components/Map';
 import NearbyElements from '../components/NearbyElements';
 import SceneView from '../components/SceneView';
+import CommandGrid from '../components/CommandGrid';
 import './ExplorePage.css';
 
 const API_BASE_URL = 'http://localhost:8080';
@@ -140,6 +141,7 @@ const ExplorePage: React.FC = () => {
                     <NearbyElements characters={characters} />
                 </div>
                 <div className="explore-bottom-section">
+                    <CommandGrid callbacks={[]} />
                     <TextInput 
                         onSubmit={(input) => setMessages(prev => [...prev, '> ' + input])}
                         onSimulate={handleSimulate}
