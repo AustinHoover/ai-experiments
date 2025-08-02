@@ -3,6 +3,7 @@ import MessageLog from '../components/MessageLog';
 import TextInput from '../components/TextInput';
 import Map from '../components/Map';
 import NearbyElements from '../components/NearbyElements';
+import SceneView from '../components/SceneView';
 import './ExplorePage.css';
 
 const API_BASE_URL = 'http://localhost:8080';
@@ -116,9 +117,17 @@ const ExplorePage: React.FC = () => {
     return (
         <div className="explore-page">
             <div className="explore-content">
-                <Map currentLocationId={currentLocationId} />
-                <div className="explore-right-panel">
-                    <MessageLog 
+                <div className="explore-main">
+                    <Map currentLocationId={currentLocationId} />
+                    <div className="explore-scene-view">
+                        <SceneView currentLocationId={currentLocationId} />
+                        <MessageLog 
+                            messages={messages} 
+                            onRefresh={handleRefresh}
+                            error={error}
+                        />
+                    </div>
+                    {/* <MessageLog 
                         messages={messages} 
                         onRefresh={handleRefresh}
                         error={error}
@@ -127,9 +136,16 @@ const ExplorePage: React.FC = () => {
                         onSubmit={(input) => setMessages(prev => [...prev, '> ' + input])}
                         onSimulate={handleSimulate}
                         isSimulating={isSimulating}
+                    /> */}
+                    <NearbyElements characters={characters} />
+                </div>
+                <div className="explore-bottom-section">
+                    <TextInput 
+                        onSubmit={(input) => setMessages(prev => [...prev, '> ' + input])}
+                        onSimulate={handleSimulate}
+                        isSimulating={isSimulating}
                     />
                 </div>
-                <NearbyElements characters={characters} />
             </div>
         </div>
     );
