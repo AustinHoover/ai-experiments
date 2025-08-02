@@ -10,12 +10,15 @@ interface Location {
     neighborIds: number[];
 }
 
+interface GraphNode {
+    id: number;
+    name: string;
+    val: number;
+    displayName: boolean;
+}
+
 interface GraphData {
-    nodes: Array<{
-        id: number;
-        name: string;
-        val: number;
-    }>;
+    nodes: GraphNode[];
     links: Array<{
         source: number;
         target: number;
@@ -73,10 +76,11 @@ const Map: React.FC<MapProps> = ({ currentLocationId }) => {
             return { nodes: [], links: [] };
         }
 
-        const nodes = [{
+        const nodes: GraphNode[] = [{
             id: location.id,
             name: location.type,
-            val: 1
+            val: 1,
+            displayName: true // Default to showing names
         }];
 
         const links: Array<{ source: number; target: number }> = [];
@@ -167,7 +171,8 @@ const Map: React.FC<MapProps> = ({ currentLocationId }) => {
                 width={300}
                 height={400}
                 nodeCanvasObject={(node, ctx, globalScale) => {
-                    const label = node.name;
+                    const graphNode = node as GraphNode;
+                    const label = graphNode.name;
                     const fontSize = 12/globalScale;
                     ctx.font = `${fontSize}px Sans-Serif`;
                     const textWidth = ctx.measureText(label).width;
@@ -204,24 +209,27 @@ const Map: React.FC<MapProps> = ({ currentLocationId }) => {
                     ctx.lineWidth = isCurrentLocation ? 3 : 2;
                     ctx.stroke();
 
-                    // Draw label background
-                    ctx.fillStyle = labelBgColor;
-                    ctx.fillRect(
-                        node.x! - bckgDimensions[0] / 2,
-                        node.y! + NODE_SIZE + 2,
-                        bckgDimensions[0],
-                        bckgDimensions[1]
-                    );
+                    // Only draw label if displayName is true
+                    if (graphNode.displayName) {
+                        // Draw label background
+                        ctx.fillStyle = labelBgColor;
+                        ctx.fillRect(
+                            node.x! - bckgDimensions[0] / 2,
+                            node.y! + NODE_SIZE + 2,
+                            bckgDimensions[0],
+                            bckgDimensions[1]
+                        );
 
-                    // Draw label text
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillStyle = '#e0e0e0';
-                    ctx.fillText(
-                        label,
-                        node.x!,
-                        node.y! + NODE_SIZE + 2 + bckgDimensions[1] / 2
-                    );
+                        // Draw label text
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillStyle = '#e0e0e0';
+                        ctx.fillText(
+                            label,
+                            node.x!,
+                            node.y! + NODE_SIZE + 2 + bckgDimensions[1] / 2
+                        );
+                    }
                 }}
             />
             {currentLocationId && (
